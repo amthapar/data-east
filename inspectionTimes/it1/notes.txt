@@ -1,0 +1,31 @@
+IT1 (inspectionTimes1)
+setup to run at Brywn Mawr under Psychopy
+subjects logged manually. 
+
+colnames
+	sub
+		- missing ok
+	trial #
+	target #
+		- Version 1 List
+	target string
+	target type 
+		- Version 1 list
+		0 = nonword
+		1 = positive
+		2=  negative
+	critical duration
+		- in frames, must know frame rate
+	brightness
+		- from -1 to 1, background is 0, neutral grey
+	nes
+		- size of pixel in pixelated noise mask
+	response
+		- is.word logical
+		True = Word
+		False = nonword
+	response time
+		- sec
+		- from end of mask
+	
+	
