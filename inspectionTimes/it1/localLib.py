@@ -8,7 +8,7 @@ def getFileName(expName):
 		for entry in dirs:
 			if targString in entry.name:
 				s=s+1
-	fname=expName+'Sub'+str(s)
+	fname=expName+'Sub'+str(s) + '.dat'
 	return(fname,s)
 	
 
@@ -21,7 +21,7 @@ def startExp(expName,runMode):
 	if runMode:
 		[fname,subject]=getFileName(expName)
 	else:
-		fname="test.dat"		
+		fname="testDat"		
 		subject=0
 	print("Output FileName is " + fname)
 	input("Enter to Continue, control-c to quit.  ") 
