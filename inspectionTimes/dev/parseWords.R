@@ -33,10 +33,15 @@ nP=length(pos)
 nN=length(neg)
 nNW=length(nonword)
 
-type=rep(0:2,c(nNW,nP,nN))
+type=rep(0:1,c(nNW,nP+nN))
+valence=rep(c(0,1,0,1),c(nNW/2,nNW/2,nP,nN))
 all=c(nonword,pos,neg)
-out=cbind(all,type)
+itemNum=(1:length(all))-1
+out=cbind(itemNum,all,type,valence)
+colnames(out)=c("itemNum","item","type","valence")
 write.table(file='allV1.txt',out,
             row.names = F,
             quote=F,
-            col.names =F)
+            col.names =T,
+            sep=',')
+
