@@ -93,7 +93,8 @@ def runBlock(block):
     for trialNum in range(trialsPerBlock):
         trl=trialInfo[block].iloc[trialNum]
         resp=runTrial(trl,pres)
-        print([sub,block,trialNum]+trl.values.tolist()+pres+resp,file=fptr)
+        out=[sub,block,trialNum]+trl.values.tolist()+pres+resp
+    print(*out,sep=", ",file=fptr)
         if not resp[2]:
             pres[0]=pres[0]+1
             correctInRow=0
