@@ -36,6 +36,17 @@ def cue(ori,rad):
                       end=[x*1.35 for x in cuePos])
     return([line1,line2])
 
+def plaid(ori,rad,sf,contrast=.1):
+    targPos=[rad*np.cos(ori),rad*np.sin(ori)]    
+    grate1 = visual.GratingStim(win, tex='sqr', size=64,contrast=contrast,
+                                ori=45,mask='circle',pos=targPos,sf=sf)    
+    grate2 = visual.GratingStim(win, tex='sqr', size=64,contrast=contrast,
+                                ori=135,mask='circle',blendmode="add",
+                                pos=targPos,sf=sf)
+    return([grate1,grate2])
+
+
+    
 def runFrames(frame,frameTimes,timerStart=4):
     event.clearEvents()
     currentFrame=0
@@ -49,16 +60,16 @@ def runFrames(frame,frameTimes,timerStart=4):
         win.flip()        
 
 def getResp(abortKey='9'):
-    keys=event.getKeys(keyList=['a','b',abortKey],timeStamped=timer)
+    keys=event.getKeys(keyList=['v','n',abortKey],timeStamped=timer)
     if len(keys)==0:
-        keys=event.waitKeys(keyList=('a','b',abortKey),timeStamped=timer)
+        keys=event.waitKeys(keyList=('v','n',abortKey),timeStamped=timer)
     resp=keys[0][0]
     rt=keys[0][1]
     if resp==abortKey:
         fptr.close()
         win.close()
         core.quit()   
-    resp = int(resp=='b')
+    resp = int(resp=='n')
     return([resp,rt])
 
 def feedback(resp,isLarge):
@@ -69,34 +80,38 @@ def feedback(resp,isLarge):
         error.play()
     return(resp==isLarge)
 
-def trial(oriTarg,oriCue,isLet,crit,rad=300,letLev=['A','B']):
-    pos=[rad*np.cos(oriTarg),rad*np.sin(oriTarg)]
-    frameTimes=[30,30,12,12,crit,1]
+def trial(oriTarg,oriCue,isLarge,crit,rad=300,sfLevels=[.12,.03],maskSamples=4):
+    frameTimes=[30,30,12,12,crit]+[1]*maskSamples+[1]
     frame=[]
     frame.append(visual.BufferImageStim(win,stim=fix()))
     frame.append(visual.BufferImageStim(win))
     frame.append(visual.BufferImageStim(win,stim=cue(ori=oriCue,rad=rad)))
     frame.append(visual.BufferImageStim(win))
-    targ=visual.TextStim(win,text=letLev[isLet],pos=pos)
-    frame.append(visual.BufferImageStim(win,stim=[targ]))
-    mask=visual.TextStim(win,text='H',pos=pos)
-    frame.append(visual.BufferImageStim(win,stim=[mask]))
+    frame.append(visual.BufferImageStim(win,stim=plaid(ori=oriTarg,rad=rad,
+                                        sf=sfLevels[isLarge])))
+    noise=visual.NoiseStim(win,units='pix',noiseType='Uniform',size=64,
+                           noiseElementSize=8,mask="circle")
+    noise.pos=[rad*np.cos(oriTarg),rad*np.sin(oriTarg)]
+    for i in range(maskSamples):
+        noise.updateNoise()
+        frame.append(visual.BufferImageStim(win,stim=[noise]))
     frame.append(visual.BufferImageStim(win))    
     runFrames(frame,frameTimes)
     [resp,rt]=getResp()
-    feedback(resp,isLet)
+    feedback(resp,isLarge)
     visual.ImageStim(win).draw()
     win.flip()
-    core.wait(.5)
-    return([resp,round(rt,3),resp==isLet])
+    core.wait(1)
+    return([resp,round(rt,3),resp==isLarge])
 
 def getReady(blkType):
     text=["Valid Cue","Opposite Cue"]
     visual.TextStim(win,text[blkType],pos=(0,30)).draw()
-    visual.TextStim(win,"Place your fingers on 'a' and 'b'",pos=(0,-10)).draw()
-    visual.TextStim(win,"Press 'a' or 'b' to begin",pos=(0,-30)).draw()
+    visual.TextStim(win,"v=Small Plaid    +    n=Large Plaid",pos=(0,10)).draw()
+    visual.TextStim(win,"Place your fingers on 'v' and 'n'",pos=(0,-10)).draw()
+    visual.TextStim(win,"Press 'v' or 'n' to begin",pos=(0,-30)).draw()
     win.flip()
-    event.waitKeys(keyList=('a','b'))
+    event.waitKeys(keyList=('v','n'))
     visual.TextStim(win,'').draw()
     win.flip()
     core.wait(1)
@@ -104,15 +119,15 @@ def getReady(blkType):
 def block(sub,blk,blkType,crit,numTrials=50):
     getReady(blkType)
     correctInRow=0;
-    isLet=np.random.randint(2,size=numTrials)
+    isLarge=np.random.randint(2,size=numTrials)
     oriTarg=np.random.uniform(low=0,high=2*np.pi,size=numTrials)
     if (blkType==0):
         oriCue=oriTarg
     else:
         oriCue=[(x+np.pi)%(2*np.pi) for x in oriTarg]
     for t in range(numTrials):
-        [resp,rt,correct]=trial(oriTarg[t],oriCue[t],isLet[t],crit)
-        out=[sub,blk,blkType,t,crit,isLet[t],round(oriTarg[t],2),round(oriCue[t],2),resp,rt,correct]
+        [resp,rt,correct]=trial(oriTarg[t],oriCue[t],isLarge[t],crit)
+        out=[sub,blk,blkType,t,crit,isLarge[t],round(oriTarg[t],2),round(oriCue[t],2),resp,rt,correct]
         print(*out,sep=", ",file=fptr)
         if not correct:
             crit=crit+1
@@ -126,7 +141,7 @@ def block(sub,blk,blkType,crit,numTrials=50):
             crit=1
 
 
-blkType=[0,0,1,0]
+blkType=[1,0,1,0]
 startCrit=[4,4,4,4]
 numTrials=[50,50,50,50]
 for b in range(len(blkType)):
