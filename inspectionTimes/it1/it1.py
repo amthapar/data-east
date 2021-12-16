@@ -95,14 +95,14 @@ def runBlock(block):
         resp=runTrial(trl,pres)
         out=[sub,block,trialNum]+trl.values.tolist()+pres+resp
     print(*out,sep=", ",file=fptr)
-        if not resp[2]:
-            pres[0]=pres[0]+1
-            correctInRow=0
-        elif correctInRow==1:
-            pres[0]=pres[0]-1
-            correctInRow=0
-        else:
-            correctInRow=1
+    if not resp[2]:
+        pres[0]=pres[0]+1
+        correctInRow=0
+    elif correctInRow==1:
+        pres[0]=pres[0]-1
+        correctInRow=0
+    else:
+        correctInRow=1
     if block<numBlock-1:
         takeBreak()
                 
