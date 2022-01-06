@@ -126,9 +126,9 @@ def block(sub,blk,blkType,crit,numTrials=50):
             crit=1
 
 
-blkType=[0,0,1,0]
-startCrit=[4,4,4,4]
-numTrials=[50,50,50,50]
+blkType=[0,1,1,0]
+startCrit=[20,20,4,4]
+numTrials=[10,10,50,50]
 for b in range(len(blkType)):
     block(sub,b,blkType[b],crit=startCrit[b],numTrials=numTrials[b])    
 win.close()
