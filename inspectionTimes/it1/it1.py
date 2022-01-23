@@ -78,8 +78,10 @@ def getReady():
     win.flip()
     core.wait(1)  
 
-def takeBreak():
-    visual.TextStim(win,"Good Job",pos=(0,10)).draw()
+def takeBreak(block):
+    visual.TextStim(win,"Good Job",pos=(0,30)).draw()
+    blockText=f"You have completed {block+1} of {numBlock} blocks."
+    visual.TextStim(win,blockText,pos=(0,10)).draw()
     visual.TextStim(win,"Take A Break",pos=(0,-10)).draw()
     visual.TextStim(win,"Press Any Key When Ready To Resume",pos=(0,-30)).draw()
     win.flip()
@@ -94,17 +96,17 @@ def runBlock(block):
         trl=trialInfo[block].iloc[trialNum]
         resp=runTrial(trl,pres)
         out=[sub,block,trialNum]+trl.values.tolist()+pres+resp
-    print(*out,sep=", ",file=fptr)
-    if not resp[2]:
-        pres[0]=pres[0]+1
-        correctInRow=0
-    elif correctInRow==1:
-        pres[0]=pres[0]-1
-        correctInRow=0
-    else:
-        correctInRow=1
+        print(*out,sep=", ",file=fptr)
+        if not resp[2]:
+            pres[0]=pres[0]+1
+            correctInRow=0
+        elif correctInRow==1:
+            pres[0]=pres[0]-1
+            correctInRow=0
+        else:
+            correctInRow=1
     if block<numBlock-1:
-        takeBreak()
+        takeBreak(block)
                 
 def endMatter():
     visual.TextStim(win,"GREAT JOB",pos=(0,10)).draw()
