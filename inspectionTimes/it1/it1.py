@@ -89,7 +89,9 @@ def takeBreak(block):
     core.wait(1)
     
 def runBlock(block):
-    pres=[6,.35,8]
+    pres=[4,.15,8]  #initial duration, contrast, mask size
+    if block==0:
+        pres[0]=7
     correctInRow=0
     getReady()
     for trialNum in range(trialsPerBlock):
@@ -103,6 +105,8 @@ def runBlock(block):
         elif correctInRow==1:
             pres[0]=pres[0]-1
             correctInRow=0
+            if pres[0]<1:
+                pres[0]=1
         else:
             correctInRow=1
     if block<numBlock-1:
