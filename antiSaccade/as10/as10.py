@@ -2,7 +2,7 @@ from psychopy import core, visual, sound, event
 import numpy as np
 import localLib
 
-[fptr,sub]=localLib.startExp(expName="as10",runMode=False)
+[fptr,sub]=localLib.startExp(expName="as10",runMode=True)
 win=visual.Window(units="pix",
                   size=(256,256), 
                   color=[0,0,0], 
