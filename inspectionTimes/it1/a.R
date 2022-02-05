@@ -2,7 +2,7 @@ mycol=c("red","darkgreen")
 mypch=c(17,19)
 mycex=c(1,1.3)
 
-dat <- read.csv('it1Sub4.dat',head=F)
+dat <- read.csv('it1Sub7.dat',head=F)
 colnames(dat) <-c('sub','blk','trl','targN','targS',
                   'isWord','isNeg','dur','bright','nes',
                   'resp','rt','acc')

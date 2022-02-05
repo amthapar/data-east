@@ -69,17 +69,21 @@ def feedback(resp,isLarge):
         error.play()
     return(resp==isLarge)
 
-def trial(oriTarg,oriCue,isLet,crit,rad=300,letLev=['A','B']):
+def trial(oriTarg,oriCue,isLet,crit,rad=300,letLev=['A','B'],contrast=.3):
     pos=[rad*np.cos(oriTarg),rad*np.sin(oriTarg)]
-    frameTimes=[30,30,12,12,crit,1]
+    frameTimes=[30,30,12,12,crit,2,2,2,1]
     frame=[]
     frame.append(visual.BufferImageStim(win,stim=fix()))
     frame.append(visual.BufferImageStim(win))
     frame.append(visual.BufferImageStim(win,stim=cue(ori=oriCue,rad=rad)))
     frame.append(visual.BufferImageStim(win))
-    targ=visual.TextStim(win,text=letLev[isLet],pos=pos)
+    targ=visual.TextStim(win,text=letLev[isLet],pos=pos,color=[contrast,contrast,contrast])
     frame.append(visual.BufferImageStim(win,stim=[targ]))
-    mask=visual.TextStim(win,text='H',pos=pos)
+    mask=visual.TextStim(win,text='#',pos=pos)
+    frame.append(visual.BufferImageStim(win,stim=[mask]))
+    mask=visual.TextStim(win,text='@',pos=pos)
+    frame.append(visual.BufferImageStim(win,stim=[mask]))
+    mask=visual.TextStim(win,text='%',pos=pos)
     frame.append(visual.BufferImageStim(win,stim=[mask]))
     frame.append(visual.BufferImageStim(win))    
     runFrames(frame,frameTimes)
