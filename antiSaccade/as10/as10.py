@@ -16,10 +16,10 @@ correct2=sound.Sound(1000,secs=.2)
 error=sound.Sound(250,secs=.5)
 
 def fix():
-    hline=visual.Line(win,units="pix",lineColor=[1,1,1])
+    hline=visual.Line(win,units="pix",lineColor=[1,1,1],lineWidth=3)
     hline.start=[-10,0]
     hline.end=[+10,0]
-    vline=visual.Line(win,units="pix",lineColor=[1,1,1])
+    vline=visual.Line(win,units="pix",lineColor=[1,1,1],lineWidth=3)
     vline.start=[0,-10]
     vline.end=[0,+10]
     return([vline,hline])
@@ -49,16 +49,16 @@ def runFrames(frame,frameTimes,timerStart=4):
         win.flip()        
 
 def getResp(abortKey='9'):
-    keys=event.getKeys(keyList=['a','b',abortKey],timeStamped=timer)
+    keys=event.getKeys(keyList=['x','m',abortKey],timeStamped=timer)
     if len(keys)==0:
-        keys=event.waitKeys(keyList=('a','b',abortKey),timeStamped=timer)
+        keys=event.waitKeys(keyList=('x','m',abortKey),timeStamped=timer)
     resp=keys[0][0]
     rt=keys[0][1]
     if resp==abortKey:
         fptr.close()
         win.close()
         core.quit()   
-    resp = int(resp=='b')
+    resp = int(resp=='m')
     return([resp,rt])
 
 def feedback(resp,isLarge):
@@ -69,9 +69,9 @@ def feedback(resp,isLarge):
         error.play()
     return(resp==isLarge)
 
-def trial(oriTarg,oriCue,isLet,crit,rad=300,letLev=['A','B'],contrast=.3):
+def trial(oriTarg,oriCue,isLet,crit,rad=300,letLev=['X','M'],contrast=.25):
     pos=[rad*np.cos(oriTarg),rad*np.sin(oriTarg)]
-    frameTimes=[30,30,12,12,crit,2,2,2,1]
+    frameTimes=[30,30,18,1,crit,3,3,3,1]  #at 60hz
     frame=[]
     frame.append(visual.BufferImageStim(win,stim=fix()))
     frame.append(visual.BufferImageStim(win))
@@ -79,11 +79,11 @@ def trial(oriTarg,oriCue,isLet,crit,rad=300,letLev=['A','B'],contrast=.3):
     frame.append(visual.BufferImageStim(win))
     targ=visual.TextStim(win,text=letLev[isLet],pos=pos,color=[contrast,contrast,contrast])
     frame.append(visual.BufferImageStim(win,stim=[targ]))
-    mask=visual.TextStim(win,text='#',pos=pos)
+    mask=visual.TextStim(win,text='#',pos=pos,color=[1,1,1])
     frame.append(visual.BufferImageStim(win,stim=[mask]))
-    mask=visual.TextStim(win,text='@',pos=pos)
+    mask=visual.TextStim(win,text='@',pos=pos,color=[1,1,1])
     frame.append(visual.BufferImageStim(win,stim=[mask]))
-    mask=visual.TextStim(win,text='%',pos=pos)
+    mask=visual.TextStim(win,text='%',pos=pos,color=[1,1,1])
     frame.append(visual.BufferImageStim(win,stim=[mask]))
     frame.append(visual.BufferImageStim(win))    
     runFrames(frame,frameTimes)
@@ -97,10 +97,10 @@ def trial(oriTarg,oriCue,isLet,crit,rad=300,letLev=['A','B'],contrast=.3):
 def getReady(blkType):
     text=["Valid Cue","Opposite Cue"]
     visual.TextStim(win,text[blkType],pos=(0,30)).draw()
-    visual.TextStim(win,"Place your fingers on 'a' and 'b'",pos=(0,-10)).draw()
-    visual.TextStim(win,"Press 'a' or 'b' to begin",pos=(0,-30)).draw()
+    visual.TextStim(win,"Place your fingers on 'x' and 'm'",pos=(0,-10)).draw()
+    visual.TextStim(win,"Press 'x' or 'm' to begin",pos=(0,-30)).draw()
     win.flip()
-    event.waitKeys(keyList=('a','b'))
+    event.waitKeys(keyList=('x','m'))
     visual.TextStim(win,'').draw()
     win.flip()
     core.wait(1)
@@ -130,9 +130,9 @@ def block(sub,blk,blkType,crit,numTrials=50):
             crit=1
 
 
-blkType=[0,1,1,0]
-startCrit=[20,20,4,4]
-numTrials=[10,10,50,50]
+blkType=[0,1,1,0,0,1]
+startCrit=[20,20,7,4,4,7]
+numTrials=[10,10,50,50,50,50]
 for b in range(len(blkType)):
     block(sub,b,blkType[b],crit=startCrit[b],numTrials=numTrials[b])    
 win.close()
