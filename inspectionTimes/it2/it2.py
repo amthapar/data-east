@@ -3,15 +3,16 @@ import numpy as np
 import sys
 import decimal
 
-
 from localLib import *
 
-expName="it1"
-runMode=True
+expName="it2"
+runMode=False
 trialsPerBlock=50
-numBlock=12
+numBlock=9
 [fptr,sub]=startExp(expName,runMode)
-trialInfo=loadV1StairCases(trialsPerBlock,numBlock)
+
+trialInfo=loadV2(trialsPerBlock,numBlock)
+
 
 
 win=visual.Window(units="pix",
@@ -26,19 +27,18 @@ correct1=sound.Sound(500,secs=.1)
 correct2=sound.Sound(1000,secs=.2)
 error=sound.Sound(250,secs=.5)
 abortKey='q'
-
-
+   
 
 
 def runTrial(trl,pres):
-    isWord=trl[2]==1
+    isR=trl[1]
     b=pres[1]
     dur=[30,30,pres[0],1]
     cumDur=np.cumsum(dur)
     stim=[]
     stim.append(visual.TextStim(win,'+'))
     stim.append(visual.TextStim(win,''))
-    stim.append(visual.TextStim(win,trl[1],color=[b,b,b]))
+    stim.append(visual.TextStim(win,trl[0],color=[b,b,b]))
     stim.append(visual.NoiseStim(win,units='pix',
                                  noiseType='Uniform',
                                  size=[128,32],
@@ -50,15 +50,15 @@ def runTrial(trl,pres):
         stim[scene].draw()
         win.flip()
     timer.reset()
-    keys=event.waitKeys(keyList=('v','n',abortKey),timeStamped=timer)
+    keys=event.waitKeys(keyList=('r','u',abortKey),timeStamped=timer)
     resp=keys[0][0]
     rt=keys[0][1]
     if resp==abortKey:
         fptr.close()
         win.close()
         core.quit()   
-    respBool = (resp=='v')
-    if (respBool==isWord):
+    respBool = (resp=='r')
+    if (respBool==isR):
         correct1.play()
         correct2.play()
     else:
@@ -67,21 +67,22 @@ def runTrial(trl,pres):
     win.flip()
     core.wait(1)
 #    rt = decimal.Decimal(rt).quantize(decimal.Decimal('1e-3'))        
-    return([int(respBool),round(rt,3),respBool==isWord])
+    return([int(respBool),round(rt,3),respBool==isR])
+
 
 def getReady():
-    visual.TextStim(win,"v=word    +    n=nonword",pos=(0,10)).draw()
-    visual.TextStim(win,"Place your fingers on 'v' and 'n'",pos=(0,-10)).draw()
-    visual.TextStim(win,"Press 'v' or 'n' to begin",pos=(0,-30)).draw()
+    visual.TextStim(win,"r= has r    +    u= no r",pos=(0,10)).draw()
+    visual.TextStim(win,"Place your fingers on 'r' and 'u'",pos=(0,-10)).draw()
+    visual.TextStim(win,"Press 'r' or 'u' to begin",pos=(0,-30)).draw()
     win.flip()
-    event.waitKeys(keyList=('v','n'))
+    event.waitKeys(keyList=('r','u'))
     visual.TextStim(win,'').draw()
     win.flip()
     core.wait(1)  
 
 def takeBreak(block):
     visual.TextStim(win,"Good Job",pos=(0,30)).draw()
-    blockText=f"You have completed {block+1} of {numBlock} blocks."
+    blockText=f"You have completed {block+1} of {numBlock+1} blocks."
     visual.TextStim(win,blockText,pos=(0,10)).draw()
     visual.TextStim(win,"Take A Break",pos=(0,-10)).draw()
     visual.TextStim(win,"Press Any Key When Ready To Resume",pos=(0,-30)).draw()
@@ -95,8 +96,8 @@ def runBlock(block):
         pres[0]=7
     correctInRow=0
     getReady()
-    for trialNum in range(trialsPerBlock):
-        trl=trialInfo[block].iloc[trialNum]
+    for trialNum in range(block*trialsPerBlock,(block+1)*trialsPerBlock):
+        trl=trialInfo.iloc[trialNum]
         resp=runTrial(trl,pres)
         out=[sub,block,trialNum]+trl.values.tolist()+pres+resp
         print(*out,sep=", ",file=fptr)
@@ -119,11 +120,10 @@ def endMatter():
     visual.TextStim(win,"Press Any Key to Exit",pos=(0,-30)).draw()
     win.flip()
     event.waitKeys()
-    core.wait(1)    
-                
-for b in range(numBlock):
+    core.wait(1)
+         
+for b in range(numBlock+1):
     runBlock(b)
-    
 endMatter()            
 fptr.close()
 win.close()
