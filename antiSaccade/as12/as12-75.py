@@ -2,7 +2,22 @@ from psychopy import core, visual, sound, event
 import numpy as np
 import localLib
 
-[fptr,sub]=localLib.startExp(expName="as10",runMode=True)
+
+win=visual.Window(units="pix",
+                  size=(256,256), 
+                  color=[0,0,0],
+                  fullscr = True,
+                  allowGUI=False)
+fps=round(win.getActualFrameRate())
+win.close()
+
+
+if fps!=75:
+    print()
+    print("WARNING....  Frame Rate is not 75")
+    input("Enter to Continue, control-c to quit.  ") 
+
+[fptr,sub]=localLib.startExp(expName="as12-75",runMode=False,fps=fps)
 win=visual.Window(units="pix",
                   size=(256,256), 
                   color=[0,0,0],
@@ -70,7 +85,8 @@ def feedback(resp,isLarge):
 
 def trial(oriTarg,oriCue,isLet,crit,rad=300,letLev=['X','M'],contrast=.25):
     pos=[rad*np.cos(oriTarg),rad*np.sin(oriTarg)]
-    frameTimes=[30,30,18,1,crit,3,3,3,1]  #at 60hz
+    frameTimes60=[30,30,18,1,crit,3,3,3,1]
+    frameTimes75=[37,37,22,1,crit,3,3,1]
     frame=[]
     frame.append(visual.BufferImageStim(win,stim=fix()))
     frame.append(visual.BufferImageStim(win))
@@ -85,7 +101,7 @@ def trial(oriTarg,oriCue,isLet,crit,rad=300,letLev=['X','M'],contrast=.25):
     mask=visual.TextStim(win,text='%',pos=pos,color=[1,1,1])
     frame.append(visual.BufferImageStim(win,stim=[mask]))
     frame.append(visual.BufferImageStim(win))    
-    runFrames(frame,frameTimes)
+    runFrames(frame,frameTimes75)
     [resp,rt]=getResp()
     feedback(resp,isLet)
     visual.ImageStim(win).draw()
@@ -130,7 +146,7 @@ def block(sub,blk,blkType,crit,numTrials=50):
 
 
 blkType=[0,1,1,0,0,1,1,0]
-startCrit=[20,20,7,4,4,7,7,4]
+startCrit=[20,20,9,5,5,9,9,5]  # for 75
 numTrials=[10,10,50,50,50,50,50,50]
 for b in range(len(blkType)):
     block(sub,b,blkType[b],crit=startCrit[b],numTrials=numTrials[b])    
