@@ -31,8 +31,8 @@ def startExp(expName,runMode):
 
 
 def getBlockTrial(tpb,b,neu,neg,pos,oNu,oNg,oP):
-    blockType=divmod(b,3)[0]
-    blockRep=divmod(b,3)[1]
+    blockType=divmod(b,3)[1]
+    blockRep=divmod(b,3)[0]
     t=range(blockRep*tpb,(blockRep+1)*tpb)
     if blockType==0:
         a=neu.iloc[oNu[t]]
