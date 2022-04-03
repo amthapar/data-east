@@ -17,7 +17,7 @@ if fps!=75:
     print("WARNING....  Frame Rate is not 75")
     input("Enter to Continue, control-c to quit.  ") 
 
-[fptr,sub]=localLib.startExp(expName="as12-75",runMode=False,fps=fps)
+[fptr,sub]=localLib.startExp(expName="as12-75",runMode=True,fps=fps)
 win=visual.Window(units="pix",
                   size=(256,256), 
                   color=[0,0,0],

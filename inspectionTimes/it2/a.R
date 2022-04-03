@@ -36,4 +36,4 @@ matplot(datB[o,],typ='l',col=mycol,lwd=2,lty=1)
 apply(datB,2,mean)
 
 library(BayesFactor)
-anovaBF(dur~val+sub,data=datC,whichRandom="sub")
+anovaBF(dur~val*sub,data=datC,whichRandom="sub")
