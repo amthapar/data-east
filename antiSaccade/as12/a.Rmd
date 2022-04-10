@@ -1,6 +1,7 @@
 ```{r}
 fname=system("ls -1 as12-75S*",intern=T)
 dat=NULL
+
 for (i in fname) dat=rbind(dat,read.csv(i,head=F))
 colnames(dat) <-c('sub','blk','blkType','trl',
                   'dur','isLet','oriT','oriC',
@@ -11,10 +12,12 @@ acc= as.integer(as.factor(dat$acc))
 ```{r}
 datA=dat[dat$blk>1,]
 crit=tapply(datA$dur,list(datA$sub,datA$blkType),mean)
-plot(crit,pch=19,col='blue',
+plot(crit,pch=19,col='blue',ylim=c(0,13),xlim=c(0,13),
      xlab="Congruent (Frames @ 75hz)",
      ylab="Incongruent (Frames @75hz)")
 abline(lm(crit[,2]~crit[,1]))
+abline(0,1)
+abline(0,2)
 ```
 
 
