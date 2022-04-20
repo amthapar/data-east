@@ -7,18 +7,10 @@ colnames(dat) <-c('sub','blk','blkType','trl',
                   'dur','isLet','oriT','oriC',
                   'resp','rt','acc')
 acc= as.integer(as.factor(dat$acc))
+write.csv(file="as12All.csv",dat,row.names = F,quote = F)
 ```
 
-```{r}
-datA=dat[dat$blk>1,]
-crit=tapply(datA$dur,list(datA$sub,datA$blkType),mean)
-plot(crit,pch=19,col='blue',ylim=c(0,13),xlim=c(0,13),
-     xlab="Congruent (Frames @ 75hz)",
-     ylab="Incongruent (Frames @75hz)")
-abline(lm(crit[,2]~crit[,1]))
-abline(0,1)
-abline(0,2)
-```
+
 
 
 
