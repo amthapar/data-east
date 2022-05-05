@@ -1,3 +1,40 @@
+Jeff Rouder
+April, 2022
+
+Data dictionary and chunk to create a csv file.  
+
+Note: all variables are numbered starting at 0 (python).
+
+------
+
+Columns
+
+sub: Subject number. Note, may not be sequential.  Misses in the sequence are inconsequential and reflect a participant who didnt show up.
+
+blk: Block.  First two are short practice blocks, remaining six are experimental blocks.
+
+blkType: Block Type.  0=Prosaccade, 1=Antisaccade
+
+trl: Trial number. 0-49 for the 50 trials.
+
+dur: Target duration.  Number of frames the target was displayed at 75hz.
+
+isLet: Target identity.  Short for isLet==M. 0='X'; 1='M'.
+
+oriT: Angle of target placement.  Standard angle parameterization used in trig functions.
+
+oriC: Angle of cue placement.  Standard angle parameterization used in trig functions.
+
+resp: Response, 0='X', 1='M'.
+
+rt: Response time. From end of 2nd mask.
+
+acc:  Accuracy,  resp==isLet.
+
+-----
+
+Cleaning:  There are no cleaning steps here.  These data need to be cleaned.  Please see any papers that reference these data for appropriate cleaning steps.
+
 ```{r}
 fname=system("ls -1 as12-75S*",intern=T)
 dat=NULL
