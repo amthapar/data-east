@@ -165,7 +165,7 @@ def block(blk,crit,numTrials=100,prac=0,inc=1):
         else:
             correctInRow[isCongruent]=1
         if crit[isCongruent]==0:
-            crit[iCongruent]=1
+            crit[isCongruent]=1
     return(crit)
 
 blk=0
