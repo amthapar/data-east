@@ -17,7 +17,7 @@ if fps!=60:
     print("WARNING....  Frame Rate is not 60hz.")
     input("Enter to Continue, control-c to quit.  ") 
 
-[fptr,sub]=localLib.startExp(expName="aStroop1",runMode=True,fps=fps)
+[fptr,sub]=localLib.startExp(expName="aStroop1Miss",runMode=True,fps=fps)
 win=visual.Window(units="pix",
                   size=(256,256), 
                   color=[-1,-1,-1],
