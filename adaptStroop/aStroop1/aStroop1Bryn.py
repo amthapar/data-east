@@ -33,10 +33,10 @@ error=sound.Sound(250,secs=.5)
 pos4 = [[-500,300],[500,300],[-500,-300],[500,-300]]
 colName4=['Red','Green','Yellow','Blue']
 colVa4l=[[1,0,0],[0,1,0],[1,1,-1],[-1,-1,1]]
-pos2 = [[0,-400],[0,400]]
+pos2 = [[-600,0],[600,0]]
 colName2=['Red','Green','Puppy']
 colVal2=[[1,-1,-1],[-1,1,-1]]
-targLevel=['X','M']
+targLevel=['W','S']
 contrast=.25
 
 numLoc=2
@@ -74,27 +74,27 @@ def runFrames(frame,frameTimes,timerStart=1):
         win.flip()        
 
 def getResp(abortKey='9'):
-    keys=event.getKeys(keyList=['x','m',abortKey],timeStamped=timer)
+    keys=event.getKeys(keyList=['w','s',abortKey],timeStamped=timer)
     if len(keys)==0:
-        keys=event.waitKeys(keyList=('x','m',abortKey),timeStamped=timer)
+        keys=event.waitKeys(keyList=('w','s',abortKey),timeStamped=timer)
     resp=keys[0][0]
     rt=keys[0][1]
     if resp==abortKey:
         fptr.close()
         win.close()
         core.quit()   
-    isRespM = int(resp=='m')
-    return([isRespM,rt])
+    isRespW = int(resp=='s')
+    return([isRespW,rt])
 
-def feedback(isRespM,isTargM):
-    if (isRespM==isTargM):
+def feedback(isRespW,isTargW):
+    if (isRespW==isTargW):
         correct1.play()
         correct2.play()
     else:
         error.play()
-    return(isRespM==isTargM)
+    return(isRespW==isTargW)
 
-def trial(cueWord,cueCol,isTargM,crit):
+def trial(cueWord,cueCol,isTargW,crit):
     frameTimes=[60,3,crit,3,3,1]
     frame=[]
     display=fix()
@@ -104,7 +104,7 @@ def trial(cueWord,cueCol,isTargM,crit):
     targDisplay=fix()
     targDisplay.append(visual.TextStim(win,colName[cueWord],color=colVal[cueCol],height=32))
     targChar=['&']*numLoc
-    targChar[cueCol]=targLevel[isTargM]
+    targChar[cueCol]=targLevel[isTargW]
     for i in range(numLoc):
         targDisplay.append(visual.TextStim(win,targChar[i],pos=pos[i]))
     frame.append(visual.BufferImageStim(win,stim=targDisplay))
@@ -113,24 +113,24 @@ def trial(cueWord,cueCol,isTargM,crit):
     maskDisplay2=fix()
     maskDisplay2.append(visual.TextStim(win,colName[cueWord],color=colVal[cueCol],height=32))
     for i in range(numLoc):
-        maskDisplay1.append(visual.TextStim(win,'$',pos=pos[i]))
+        maskDisplay1.append(visual.TextStim(win,'@',pos=pos[i]))
         maskDisplay2.append(visual.TextStim(win,'#',pos=pos[i]))
     frame.append(visual.BufferImageStim(win,stim=maskDisplay1))
     frame.append(visual.BufferImageStim(win,stim=maskDisplay2))
     frame.append(visual.BufferImageStim(win,stim=display))                
     runFrames(frame,frameTimes)
-    [isRespM,rt]=getResp()
-    correct=feedback(isRespM,isTargM)
+    [isRespW,rt]=getResp()
+    correct=feedback(isRespW,isTargW)
     visual.ImageStim(win).draw()
     win.flip()
     core.wait(.5)
-    return([isRespM,round(rt,3),correct])
+    return([isRespW,round(rt,3),correct])
  
 def getReady():
-    visual.TextStim(win,"Place your fingers on 'x' and 'm'",pos=(0,-10)).draw()
-    visual.TextStim(win,"Press 'x' or 'm' to begin",pos=(0,-30)).draw()
+    visual.TextStim(win,"Place your left-hand fingers on 'w' and 's'",pos=(0,-10)).draw()
+    visual.TextStim(win,"Press 'w' or 's' to begin",pos=(0,-30)).draw()
     win.flip()
-    event.waitKeys(keyList=('x','m'))
+    event.waitKeys(keyList=('s','w'))
     visual.TextStim(win,'').draw()
     win.flip()
     core.wait(1)
@@ -139,7 +139,7 @@ def block(blk,crit,numTrials=100,prac=0,inc=1):
     getReady()
     correctInRow=[0,0];
     for t in range(numTrials):
-        isTargM=np.random.randint(2)
+        isTargW=np.random.randint(2)
         isCongruent=np.random.randint(2)
         cueCol=np.random.randint(numLoc)
         if (isCongruent):
@@ -151,9 +151,9 @@ def block(blk,crit,numTrials=100,prac=0,inc=1):
                 flag = (cueWord==cueCol)
         if (prac):
             cueWord=numLoc
-        [resp,rt,correct]=trial(cueWord=cueWord,cueCol=cueCol,isTargM=isTargM,
+        [resp,rt,correct]=trial(cueWord=cueWord,cueCol=cueCol,isTargW=isTargW,
                                 crit=crit[isCongruent])
-        out=[sub,blk,t,isCongruent,cueWord,cueCol,isTargM,
+        out=[sub,blk,t,isCongruent,cueWord,cueCol,isTargW,
              crit[isCongruent],resp,rt,correct]
         print(*out,sep=", ",file=fptr)
         if not correct:
