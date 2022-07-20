@@ -51,12 +51,18 @@ if numLoc==2:
 def fix():
     outer=[]
     for i in range(numLoc):
-        outer.append(visual.Rect(win,units='pix',lineColor=[1,1,1],lineWidth=2,
+        outer.append(visual.Rect(win,units='pix',
+                                 fillColor=[-1,-1,-1],
+                                 lineColor=[1,1,1],
+                                 lineWidth=2,
                                  width=100,
                                  height=100,
                                  pos=pos[i]))
         outer.append(visual.TextStim(win,colName[i],pos=[pos[i][0],pos[i][1]+70]))
-    outer.append(visual.Rect(win,units="pix",lineColor=[1,1,1],lineWidth=2,
+    outer.append(visual.Rect(win,units="pix",
+                             fillColor=[-1,-1,-1],
+                             lineColor=[1,1,1],
+                             lineWidth=2,
                              width=150,
                              height=70))
     return(outer)
