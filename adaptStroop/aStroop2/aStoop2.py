@@ -175,7 +175,7 @@ def block(blk,crit,numTrials=100,prac=0,inc=1):
 print(*header,sep=", ",file=fptr)
 fptr.flush()
 blk=0
-startCrit=block(blk,crit=[40,40],numTrials=3,prac=1,inc=5)
+startCrit=block(blk,crit=[40,40],numTrials=30,prac=1,inc=5)
 crit=[int((startCrit[0]+startCrit[1])/2)]*2
 while (blk<4):
     blk=blk+1
