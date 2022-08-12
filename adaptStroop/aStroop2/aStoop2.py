@@ -1,16 +1,16 @@
-from psychopy import core, visual, sound, event
+from psychopy import core, visual, event
 import numpy as np
 import localLib
 
 
-#win=visual.Window(units="pix",
-#                  size=(256,256), 
-#                  color=[0,0,0],
-#                  fullscr = True,
-#                  allowGUI=False)
-#fps=round(win.getActualFrameRate())
-#win.close()
-fps=60
+
+win=visual.Window(units="pix",
+                  size=(256,256), 
+                  color=[0,0,0],
+                  fullscr = True,
+                  allowGUI=False)
+fps=round(win.getActualFrameRate())
+win.close()
 
 if fps!=60:
     print()
@@ -26,9 +26,7 @@ win=visual.Window(units="pix",
 
 mouse = event.Mouse(visible=False)
 timer = core.Clock()
-correct1=sound.Sound(500,secs=.1)
-correct2=sound.Sound(1000,secs=.2)
-error=sound.Sound(250,secs=.5)
+
 
 abortKey='q'
 center=[0,-300]
@@ -95,14 +93,14 @@ def getResp():
 
 def feedback(resp,correctResp):
     if (resp==correctResp):
-        correct1.play()
-        correct2.play()
+        visual.ImageStim(win,"correct.png").draw()
     else:
-        error.play()
+        visual.ImageStim(win,"error.png").draw()
+    win.flip
     return(resp==correctResp)
 
 def trial(cueWord,cueCol,targets,crit):
-    frameTimes=[60,6,crit,3,3,30]
+    frameTimes=[75,6,crit,3,3,30]
     frame=[]
     display=fix()
     frame.append(visual.BufferImageStim(win,stim=display))
@@ -152,8 +150,8 @@ def block(blk,crit,numTrials=100,prac=0,inc=1):
         else:
             flag=True
             while (flag):
-                cueWord=np.random.randint(nLoc)
-                flag = (cueWord==cueCol)
+                cueWord=colName[np.random.randint(nLoc)]
+                flag = (cueWord==colName[cueCol])
         if (prac):
             cueWord="Puppy"
         targets=np.random.choice(targetSet,nLoc,replace=False)
