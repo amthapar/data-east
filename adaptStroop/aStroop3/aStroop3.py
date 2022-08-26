@@ -17,7 +17,7 @@ if fps!=60:
     print("WARNING....  Frame Rate is not 60hz.")
     input("Enter to Continue, control-c to quit.  ") 
 
-[fptr,sub]=localLib.startExp(expName="aStroop3",runMode=False,fps=fps)
+[fptr,sub]=localLib.startExp(expName="aStroop3",runMode=True,fps=fps)
 win=visual.Window(units="pix",
                   size=(256,256), 
                   color=[-1,-1,-1],
@@ -41,7 +41,8 @@ contrast=.25
 nLoc=len(ang)
 
 headTarg=["targ"+x for x in boxLabel]
-header=['sub','blk','trl','cong','cueWord','cueColor',*headTarg,'soa','resp','rt','correct']
+header=['sub','blk','trl','cong','cue','number',*headTarg,'soa','resp','rt','correct']
+
 
 
 def fix():
@@ -126,18 +127,39 @@ def trial(cue,number,targets,crit):
     win.flip()
     core.wait(.5)
     return([resp,round(rt,3),correct])
- 
-def getReady():
-    visual.TextStim(win,"Get Ready, Responses are A to L",pos=(0,-10)).draw()
-    visual.TextStim(win,"Press 'G' to begin",pos=(0,-30)).draw()
+
+def instructTrial(cue,number,targets):
+    frameTimes=[75,12,1]
+    frame=[]
+    display=fix()
+    frame.append(visual.BufferImageStim(win,stim=display))
+    display.append(visual.TextStim(win,cue,height=32,pos=center))
+    frame.append(visual.BufferImageStim(win,stim=display))
+    for i in range(nLoc):
+        display.append(visual.TextStim(win,targets[i],pos=pos[i]))
+    frame.append(visual.BufferImageStim(win,stim=display))    
+    runFrames(frame,frameTimes)     
+    [resp,rt]=getResp()
+    correct=feedback(resp,targets[number])
+    visual.ImageStim(win).draw()
     win.flip()
-    event.waitKeys(keyList=('g'))
+    core.wait(.5)
+    return([resp,round(rt,3),correct])
+
+ 
+def texter(text,keyList=None):
+    for i in range(len(text)):
+        visual.TextStim(win,text[i],pos=(0,-i*30)).draw()
+    win.flip()
+    if keyList is None:
+        event.waitKeys()
+    else:
+        event.waitKeys(keyList=keyList)
     visual.TextStim(win,'').draw()
     win.flip()
     core.wait(1)
 
 def block(blk,crit,numTrials=100,inc=1):
-    getReady()
     correctInRow=[0,0];
     last=nLoc+1
     for t in range(numTrials):
@@ -173,13 +195,59 @@ def block(blk,crit,numTrials=100,inc=1):
     return(crit)
 
 
+
+
+
 print(*header,sep=", ",file=fptr)
 fptr.flush()
+
+
+texter(["Welcome","You Can Ask Questions At Any Time",
+        "(press any key to continue)"])
+instructTrial("33",1,['F','K','S','H'])
+instructTrial("444",2,['J','S','A','L'])
+instructTrial("22",1,['G','J','A','H'])
+instructTrial("3333",3,['F','L','D','G'])
+instructTrial("1",0,['L','A','S','J'])
+
+texter(["Try It With Flashed Numbers and Letters",
+        "Any Questions?",
+        "(press any key to continue)"])
+trial("33",1,['F','K','S','H'],120)
+trial("444",2,['J','S','A','L'],120)
+trial("22",1,['G','J','A','H'],120)
+trial("3333",3,['F','L','D','G'],90)
+trial("1",0,['L','A','S','J'],90)
+
+
+texter(["We Are Going To Speed Up The Flashes",
+        "You Just Do Your Best",
+        "Any Questions?", "(press any key to contine)"])
+
 blk=0
-crit=block(blk,crit=[60,60],numTrials=0,inc=5)
+texter(["Get Ready",
+        "Responses are A, S, D, F,G , H, J, K, L",
+        "Press G to Continue"],"g")
+crit=block(blk,crit=[60,60],numTrials=50,inc=5)
+blk=1
+texter(["That was the first block",
+        "As you do better, we make it harder",
+        "So, you can't be perfect",
+        "Just do your best",
+        "Press G to Continue"],"g")
+
+texter(["Get Ready for Block "+str(blk+1)+ " (of 5)",
+        "Responses are A, S, D, F,G , H, J, K, L",
+        "Press G to Continue"],"g")
+crit=block(blk,crit,numTrials=50,inc=2)
 while (blk<4):
     blk=blk+1
-    crit=block(blk,crit,numTrials=100,inc=1)
+    texter(["Get Ready for Block "+str(blk+1)+ " (of 5)",
+        "Responses are A, S, D, F,G , H, J, K, L",
+        "Press G to Continue"],"g")
+    crit=block(blk,crit,numTrials=80,inc=1)
+
+texter(['All Done','Thank You','See Experimenter'],'q')
 
 win.close()
 core.quit()
