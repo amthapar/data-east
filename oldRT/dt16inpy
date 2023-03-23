@@ -1,0 +1,10 @@
+dt16allybattery
+j0 i0
+?/ zZ
+FOR SUBJ
+IF ((OPOS>1)AND(TEST>1)) j=30-70+5
+END
+%%
+GUB 2500.000
+GLB  250.000
+

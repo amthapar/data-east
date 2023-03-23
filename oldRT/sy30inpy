@@ -1,0 +1,12 @@
+sy30allybattery
+k1 i1
+/?.,ml;' Zzcxasdv
+FOR SUBJ
+IF ((TEST>1) AND (i==1)) k=1-2+1
+IF ((TEST>1) AND (i==2)) k=1-2+1
+IF ((TEST>1) AND (i==3)) k=1-2+1
+END
+%%
+GUB 3500.000
+GLB  300.000
+

@@ -1,0 +1,11 @@
+pb1allybattery
+w1 f1 l2 c3
+/?., Zzx
+FOR SUBJ
+IF (w==1) f=1/2/3/
+IF (w==2)
+END
+%%
+GUB 3500.000
+GLB  300.000
+
