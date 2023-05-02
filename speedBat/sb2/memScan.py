@@ -570,13 +570,13 @@ def runMemSpan(trial_size, target_size=[2,5], method = 1, train = False, rnd=1):
         q = " ".join(q)
         q_stim = visual.TextStim(
             win = win,
-            text = q.upper(),
+            text = "TEST1",
             pos = (0,0),
             color = [.9,.9,0]
         )
         s_stim = visual.TextStim(
             win = win,
-            text = s.upper(),
+            text = "TEST2",
             pos = (0,0),
             color = 'white'
         )
