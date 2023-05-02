@@ -570,17 +570,17 @@ def runMemSpan(trial_size, target_size=[2,5], method = 1, train = False, rnd=1):
         q = " ".join(q)
         q_stim = visual.TextStim(
             win = win,
-            text = "TEST1",
+            text = q.upper(),
             pos = (0,0),
             color = [.9,.9,0]
         )
         s_stim = visual.TextStim(
             win = win,
-            text = "TEST2",
+            text = s.upper(),
             pos = (0,0),
             color = 'white'
         )
-        s_stim.size = q_stim.size = 5
+        # s_stim.size = q_stim.size = 5
         [resp,rt,acc,tooFast] = memSpanTrial(truth, q_stim, s_stim)
 
         cond = 0 if size[t] == target_size[0] else 1 
