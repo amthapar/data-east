@@ -31,7 +31,7 @@ if fps!=60:
     print("WARNING....  Frame Rate is not 60hz.")
     input("Enter to Continue, control-c to quit.  ") 
 
-run_mode = False
+run_mode = True
 if run_mode == False:
     nt_inst_t = 5
     nt_rest_tasks = 5
@@ -66,7 +66,7 @@ correct1=sound.Sound(500,secs=.1)
 correct2=sound.Sound(1000,secs=.2)
 error=sound.Sound(250,secs=.5)
 
-header=['sub','task','condition','correct','rt','resp','block','accuracy','trial','round','2fast']
+header=['sub','task','cond1','cond2','rt','inputResp','training','accuracy','trial','block','2fast']
 
 
 ########################################
@@ -170,12 +170,27 @@ def conjunct(truth, size, set_size, st, ins = False):
 
 
 def conjunctTrial(size, truth, set_size, st):
+    x = visual.TextStim(
+        win = win,
+        text = "X: NO backward N",
+        pos = (-400,-475),
+        color = "white"
+    )
+    m = visual.TextStim(
+        win = win,
+        text = "M: YES backward N",
+        pos = (400,-475),
+        color = "white"
+    )
     frameTimes=[30,30,1]  #at 60hz
     stims = conjunct(truth, size, set_size, st)
     frame=[]
-    frame.append(visual.TextStim(win,"+"))
-    frame.append(visual.TextStim(win,""))
-    frame.append(visual.BufferImageStim(win,stim=stims))
+    tstim = [visual.TextStim(win,"+"), m, x]
+    frame.append(visual.BufferImageStim(win,stim=tstim))
+    tstim = [visual.TextStim(win,""), m, x]
+    frame.append(visual.BufferImageStim(win,stim=tstim))
+    tstim = stims+[x,m]
+    frame.append(visual.BufferImageStim(win,stim=tstim))
     runFrames(frame,frameTimes, timerStart=2)
     [resp,rt,ac]=getResp(truth = truth)
     acc=feedback(ac,1)
@@ -186,6 +201,7 @@ def conjunctTrial(size, truth, set_size, st):
         tooFast = 0
 
     return(resp,rt,acc,tooFast)
+
 
 
 def runConjunct(trial_size, set_size = [2,18], method = 1, train = False, rnd=1):
@@ -211,7 +227,6 @@ def runConjunct(trial_size, set_size = [2,18], method = 1, train = False, rnd=1)
         out=[sub,2,cond,truth[i],round(rt,2),resp2,int(train),int(acc),i+1,rnd,tooFast]
         print(*out,sep=", ",file=fptr)
         fptr.flush()
-
 
 ### Mental Rotation:
 
@@ -395,16 +410,38 @@ def presMat(orig_mat, rot_mat, ins = False):
     return(stims)
 
 def menRotTrial(stims, truth, curve, match = False):
+    x = visual.TextStim(
+        win = win,
+        text = "X: Mismatch",
+        pos = (-400,-475),
+        color = "white"
+    )
+    m = visual.TextStim(
+        win = win,
+        text = "M: Match",
+        pos = (400,-475),
+        color = "white"
+    )
+
+
     frameTimes=[30,30,60,60,1]  #at 60hz
     frame=[]
     #frame.append(visual.BufferImageStim(win, stim = stims))
-    frame.append(visual.TextStim(win,"+"))
-    frame.append(visual.TextStim(win,""))
+    tstim = [visual.TextStim(win,"+"), m, x]
+    frame.append(visual.BufferImageStim(win,stim=tstim))
+    tstim = [visual.TextStim(win,""), m, x]
+    frame.append(visual.BufferImageStim(win,stim=tstim))
     if match == True:
-        frame.append(curve)
+        tstim = [curve, x, m]
+        frame.append(visual.BufferImageStim(win,stim=tstim))
     else:
+        curve.append(x)
+        curve.append(m)
         frame.append(visual.BufferImageStim(win,stim=curve))
-    frame.append(visual.TextStim(win,""))
+    tstim = [visual.TextStim(win,""), m, x]
+    frame.append(visual.BufferImageStim(win,stim=tstim))
+    stims.append(x)
+    stims.append(m)
     frame.append(visual.BufferImageStim(win,stim=stims))
     runFrames(frame,frameTimes, timerStart=4)
     [resp,rt,ac]=getResp(truth = truth)
@@ -543,7 +580,7 @@ def runMemSpan(trial_size, target_size=[2,5], method = 1, train = False, rnd=1):
             pos = (0,0),
             color = 'white'
         )
-        s_stim.size = q_stim.size = 5
+        # s_stim.size = q_stim.size = 5
         [resp,rt,acc,tooFast] = memSpanTrial(truth, q_stim, s_stim)
 
         cond = 0 if size[t] == target_size[0] else 1 
@@ -570,13 +607,28 @@ def mask():
     return(mask1, mask2)
 
 def memSpanTrial(truth, q, s):
+    x = visual.TextStim(
+        win = win,
+        text = "X: NO. White letter was not also a yellow letter",
+        pos = (-400,-475),
+        color = "white"
+    )
+    m = visual.TextStim(
+        win = win,
+        text = "M: YES. White letter was also a yellow letter",
+        pos = (400,-475),
+        color = "white"
+    )
     frameTimes=[60,30,60,1]  #at 60hz
     frame=[]
     [mask1,mask2] = mask()
-    frame.append(visual.TextStim(win,"+"))
-    frame.append(q)
-    frame.append(visual.TextStim(win,""))
-    frame.append(s)
+    tstim = [visual.TextStim(win,"+"), m, x]
+    frame.append(visual.BufferImageStim(win,stim=tstim))
+    frame.append(visual.BufferImageStim(win,stim=[q, m, x]))
+    tstim = [visual.TextStim(win,""), m, x]
+    frame.append(visual.BufferImageStim(win,stim=tstim))
+    frame.append(visual.BufferImageStim(win,stim=[s, m, x]))
+
     # frame.append(mask1)
     # frame.append(mask2)
 
@@ -589,6 +641,7 @@ def memSpanTrial(truth, q, s):
     else:
         tooFast = 0
     return(resp,rt,acc,tooFast)
+
 
 ### Inspection time:
 
@@ -612,15 +665,25 @@ def getRespInsTime(s, abortKey='9'):
 
 
 def insTimeTrial(t, q, s):
+    x = visual.TextStim(
+        win = win,
+        text = "",
+        pos = (0,-275),
+        color = "white"
+    )
+
     frameTimes=[30,30,t,3,3,1]  #at 60hz
     frame=[]
     [mask1,mask2] = mask()
-    frame.append(visual.TextStim(win,"+", color = "white"))
-    frame.append(visual.TextStim(win,""))
-    frame.append(q)
-    frame.append(mask1)
-    frame.append(mask2)
-    frame.append(visual.TextStim(win,""))
+    tstim = [visual.TextStim(win,"+"), x]
+    frame.append(visual.BufferImageStim(win,stim=tstim))
+    tstim = [visual.TextStim(win,""), x]
+    frame.append(visual.BufferImageStim(win,stim=tstim))
+    frame.append(visual.BufferImageStim(win,stim=[q,x]))
+    frame.append(visual.BufferImageStim(win,stim=[mask1,x]))
+    frame.append(visual.BufferImageStim(win,stim=[mask2,x]))
+    frame.append(visual.BufferImageStim(win,stim=[visual.TextStim(win,""),x]))
+
     runFrames(frame,frameTimes, timerStart=2)
     [resp,rt]=getRespInsTime(s)
     resp2 = int(resp==s)
@@ -662,13 +725,17 @@ def runInsTime(trial_size, rnd = 1):
         out=[sub,0,t,x,round(rt,2),resp,"NA",int(acc),i+1,rnd,"NA"]
         print(*out,sep=", ",file=fptr)
         fptr.flush()
-
 ### Buffer:
 
-def getRespBuffer(abortKey='9'):
-    keys=event.getKeys(keyList=["x",abortKey],timeStamped=timer)
-    if len(keys)==0:
-        keys=event.waitKeys(keyList=("x",abortKey),timeStamped=timer)
+def getRespBuffer(abortKey='9', sp = False):
+    if sp == True:
+        keys=event.getKeys(keyList=["m",abortKey],timeStamped=timer)
+        if len(keys)==0:
+            keys=event.waitKeys(keyList=("m",abortKey),timeStamped=timer)
+    else:
+        keys=event.getKeys(keyList=["x",abortKey],timeStamped=timer)
+        if len(keys)==0:
+            keys=event.waitKeys(keyList=("x",abortKey),timeStamped=timer)
     resp=keys[0][0]
     rt=keys[0][1]
     if resp==abortKey:
@@ -699,7 +766,7 @@ def warn():
     frame.append(visual.TextStim(win,""))
     frame.append(visual.TextStim(win,"Too fast!"))
     frame.append(visual.TextStim(win,""))
-    frame.append(visual.TextStim(win,"Pay attention! \n press 'X' to continue..."))
+    frame.append(visual.TextStim(win,"Pay attention! \n press X to continue..."))
     runFrames(frame,frameTimes, timerStart=0)
     getRespBuffer()
 
@@ -715,7 +782,7 @@ def expBuffer(exp, round = 1):
     )
     txt0= visual.TextStim(
         win = win,
-        text = "Press 'X' to continue...",
+        text = "Press X to continue...",
         pos = (0,-150),
         color = [0,1,0]
     )
@@ -726,7 +793,7 @@ def expBuffer(exp, round = 1):
     getRespBuffer()
     txt0= visual.TextStim(
         win = win,
-        text = "Press 'X' to begin...",
+        text = "Press X to begin...",
         pos = (0,-150),
         color = [0,1,0]
     )
@@ -734,13 +801,13 @@ def expBuffer(exp, round = 1):
     frame=[]
     if round == 2:
         if exp == 0:
-            txt = "In the upcoming task, your objective again is to recognize the displayed letter and input it using the keyboard."
+            txt = "Let's do the flash task one last time. \nLetter are flashed briefly, what letter was flashed?" 
         if exp == 1:
-            txt = "In the upcoming task, your objective again is to determine whether the presented grids are identical or distinct. Press 'M' for a match and 'X' for a difference."
+            txt = "Let's do the rotation task one last time, do the grids match (M) or mismatch (X)?"
         if exp == 2:
-            txt = "In the upcoming task, your objective again is to determine if a backward letter is present among the forward-facing letters. Press 'M' if you find one and 'X' if none exists."
+            txt = "Let's do the white-yellow task one last time, was the white letter a yellow letter (M) or not (X)?"
         if exp == 3:
-            txt = "In the upcoming task, your objective again is to determine  whether the second displayed letter was part of the initial set of letters. Press 'M' if it was and 'X' if it wasn't."
+            txt = "Let's do the search task one last time, Is there a backwards N (M) or not (X)?"
 
         txt2= visual.TextStim(
             win = win,
@@ -761,7 +828,7 @@ def trainBuffer(exp):
     frame=[]
     txt0= visual.TextStim(
         win = win,
-        text = "Press 'X' to continue...",
+        text = "Press X to continue...",
         pos = (0,-250),
         color = [0,1,0]
     )
@@ -775,7 +842,7 @@ def trainBuffer(exp):
         )
         txt00= visual.TextStim(
             win = win,
-            text = "Press 'X' to continue to the next task...",
+            text = "Press X to continue to the next task...",
             pos = (0,-150),
             color = [0,1,0]
         )
@@ -797,7 +864,7 @@ def trainBuffer(exp):
         stims_rot = presMat(mat, mat_rot)
         txt1= visual.TextStim(
             win = win,
-            text = "In this task, you will be presented with grids, similar to the example below:",
+            text = "In this task, you will see grids of red and blue boxes.",
             pos = (0,150),
             color = [0,1,0]
         )
@@ -810,7 +877,7 @@ def trainBuffer(exp):
         frame=[]
         txt2 =visual.TextStim(
             win = win,
-            text = "Occasionally, the grids represent the same object.",
+            text = "Here, the grids match.",
             pos = (0,150),
             color = [0,1,0]
         )
@@ -823,7 +890,7 @@ def trainBuffer(exp):
         frame=[]
         txt3 =visual.TextStim(
             win = win,
-            text = "Sometimes one grid may be a rotated version of the other.",
+            text = "Here they match, even though one is rotated.",
             pos = (0,350),
             color = [0,1,0]
         )
@@ -837,7 +904,7 @@ def trainBuffer(exp):
         frame=[]
         txt4 =visual.TextStim(
             win = win,
-            text = "In some instances, the grids display distinct objects.",
+            text = "Here, they do not match.",
             pos = (0,100),
             color = [0,1,0]
         )
@@ -851,7 +918,7 @@ def trainBuffer(exp):
         frame.append(visual.TextStim(win,""))
         txt5 =visual.TextStim(
             win = win,
-            text = "Your task is to determine if the grids represent the same object or not. If they do, press 'M' for match. If not, press 'X' for mismatch.",
+            text = "Your task is to determine if the grids match or not. \n\n\n Press M for match. \n\n\n Press X for mismatch.",
             pos = (0,100),
             color = [0,1,0]
         )
@@ -865,7 +932,7 @@ def trainBuffer(exp):
         mat = np.array([[1,0,0],[1,0,0],[0,0,0]])
         txt1= visual.TextStim(
             win = win,
-            text = "In this task, you will be presented with a series of letters, similar to the example below:",
+            text = "In this task, you will be presented with a bunch of Ns, similar to the example below:",
             pos = (0,250),
             color = [0,1,0]
         )
@@ -878,7 +945,7 @@ def trainBuffer(exp):
         frame=[]
         txt2 =visual.TextStim(
             win = win,
-            text = "Occasionally, all the letters displayed are forwardfacing.",
+            text = "Here, all the Ns are facing forward.",
             pos = (0,250),
             color = [0,1,0]
         )
@@ -891,7 +958,7 @@ def trainBuffer(exp):
         frame=[]
         txt3 =visual.TextStim(
             win = win,
-            text = "Other times, one of the letters may be facing backward.",
+            text = "Here, one N is facing backward, see the red N.",
             pos = (0,250),
             color = [0,1,0]
         )
@@ -905,7 +972,7 @@ def trainBuffer(exp):
         frame.append(visual.TextStim(win,""))
         txt5 =visual.TextStim(
             win = win,
-            text = "Your task is to determine if a backward letter is present. If you find one, press 'M' for yes. If not, press 'X' for no.",
+            text = "Is a backward N present or not? \n\nPress M for a backward N. \n\nPress X for no backward N.",
             pos = (0,100),
             color = [0,1,0]
         )
@@ -953,7 +1020,7 @@ def trainBuffer(exp):
         )
         txt1= visual.TextStim(
             win = win,
-            text = "In this task, you will be presented with a collection of letters, similar to the example below:",
+            text = "In this task, you will see one or more yellow letters:",
             pos = (0,150),
             color = [0,1,0]
         )
@@ -966,7 +1033,7 @@ def trainBuffer(exp):
         frame=[]
         txt2 =visual.TextStim(
             win = win,
-            text = "Following this, you will be shown a single letter. \nYour task is to determine if this letter was also present in the previous collection.",
+            text = "Then you will see one white letter.",
             pos = (0,150),
             color = [0,1,0]
         )
@@ -979,74 +1046,108 @@ def trainBuffer(exp):
         frame=[]
         txt3 =visual.TextStim(
             win = win,
-            text = "If the letter was present in the previous collection, press 'M'.",
+            text = "Was the white letter in the yellow letters? \n\n\nPress M for YES. \n\n\nPress X for NO.",
             pos = (0,150),
             color = [0,1,0]
         )
-        stims = [txt0] + [txt3] + [sr_stim]
+        stims = [txt0] + [txt3] 
         frame.append(visual.TextStim(win,""))
         frame.append(visual.BufferImageStim(win,stim=stims))
         runFrames(frame,frameTimes, timerStart=0)
         getRespBuffer()
 
         frame=[]
-        txt4 =visual.TextStim(
+        q_stim_5 = visual.TextStim(
             win = win,
-            text = "If the letter was not present in the previous collection, press 'X'.",
+            text = "MHPJR",
             pos = (0,150),
+            color = [.9,.9,0]
+        )
+
+        sr_stim = visual.TextStim(
+            win = win,
+            text = "J",
+            pos = (0,50),
+            color = 'white'
+        )
+        txt31 = visual.TextStim(
+            win = win,
+            text = "The white letter J is also a yellow letter, so press M for yes.",
+            pos = (0,-150),
             color = [0,1,0]
         )
-        stims = [txt0] + [txt4] + [sw_stim]
+
+        stims = [txt31] + [q_stim_5] + [sr_stim]
+        frame.append(visual.TextStim(win,""))
+        frame.append(visual.BufferImageStim(win,stim=stims))
+        runFrames(frame,frameTimes, timerStart=0)
+        getRespBuffer(sp = True)
+
+
+        frame=[]
+        q_stim_5 = visual.TextStim(
+            win = win,
+            text = "MHPJR",
+            pos = (0,150),
+            color = [.9,.9,0]
+        )
+
+        sw_stim = visual.TextStim(
+            win = win,
+            text = "V",
+            pos = (0,50),
+            color = 'white'
+        )
+        txt31 = visual.TextStim(
+            win = win,
+            text = "The white letter V is not a yellow letter, so press X for no.",
+            pos = (0,-150),
+            color = [0,1,0]
+        )
+
+        stims =[txt31] + [q_stim_5] + [sw_stim]
         frame.append(visual.TextStim(win,""))
         frame.append(visual.BufferImageStim(win,stim=stims))
         runFrames(frame,frameTimes, timerStart=0)
         getRespBuffer()
 
-        frame=[]
-        frame.append(visual.TextStim(win,""))
-        txt5 =visual.TextStim(
-            win = win,
-            text = "Occasionally, the collection may consist of just one letter being displayed.",
-            pos = (0,150),
-            color = [0,1,0]
-        )
-
-        stims = [txt0] + [txt5] + [q_stim_1]
         
-        frame.append(visual.BufferImageStim(win,stim=stims))
-        runFrames(frame,frameTimes, timerStart=0)
-        getRespBuffer()
 
-        frame = []
-        frame.append(visual.TextStim(win,""))
-        txt6 =visual.TextStim(
-            win = win,
-            text = "Likewise, when the subsequent letter is displayed, press 'M' if it matches the previous letter and 'X' if it doesn't.",
-            pos = (0,150),
-            color = [0,1,0]
-        )
-
-        frame.append(visual.BufferImageStim(win,stim=[txt0,txt6,sw_stim2]))
-        runFrames(frame,frameTimes, timerStart=0)
-        getRespBuffer()
+        
 
     if exp == 0:
+        
+        frameTimes=[30,1]  #at 60hz
+        txt99= visual.TextStim(
+            win = win,
+            text = "Welcome! You are going to be asked to do four different tasks.",
+            pos = (0,150),
+            color = [0,1,0]
+        )
+
+        stims2 = [txt0] + [txt99]
+        frame.append(visual.TextStim(win,""))
+        frame.append(visual.BufferImageStim(win,stim=stims2))
+        runFrames(frame,frameTimes, timerStart=0)
+        getRespBuffer()
+        
+        frame = []
         frameTimes=[30,1]  #at 60hz
         txt1= visual.TextStim(
             win = win,
-            text = "In this task, you will initially see a single letter, which will be masked subsequently.",
+            text = "In this task, we will flash a letter briefly, followed by two punctuation marks.",
             pos = (0,150),
             color = [0,1,0]
         )
         txt9= visual.TextStim(
             win = win,
-            text = "Your task is to recognize the letter and press the corresponding key on your keyboard.",
+            text = "Your task is to identify the letter by pressing the corresponding key on your keyboard.",
             pos = (0,0),
             color = [0,1,0]
         )
         txt10= visual.TextStim(
             win = win,
-            text = "Press 'X' to see an example...",
+            text = "Press X to see an example...",
             pos = (0,0),
             color = [0,1,0]
         )
@@ -1078,7 +1179,7 @@ def trainBuffer(exp):
         frame.append(mask2)
         txt11= visual.TextStim(
             win = win,
-            text = "Now, input the letter you observed on the screen.",
+            text = "Now, did you see 'K'? \nIf so press 'K' on the keyboard.",
             pos = (0,150),
             color = [0,1,0]
         )
@@ -1091,23 +1192,18 @@ def trainBuffer(exp):
         q = " ".join(letters)
         txt15=visual.TextStim(
             win = win,
-            text = "The duration for which the letter is displayed will decrease as you perform better.",
-            pos = (0,200),
+            text = "Good job! \nThe flashes will get faster and it is normal to make mistakes.",
+            pos = (0,100),
             color = [0,1,0]
         )
         txt16=visual.TextStim(
             win = win,
-            text = "Only letters from the second row of the keyboard will be displayed. That is:",
-            pos = (0,100),
+            text = "Only letters from the second row of the keyboard, 'A' to 'L' will be flashed.",
+            pos = (0,0),
             color = [0,1,0]
         )
-        txt17=visual.TextStim(
-            win = win,
-            text = letters,
-            pos = (0,-50),
-            color = [.5,.5,0]
-        )
-        stims = [txt15] + [txt0] + [txt16] + [txt17]
+
+        stims = [txt15] + [txt0] + [txt16]
         frame.append(visual.TextStim(win,""))
         frame.append(visual.BufferImageStim(win,stim=stims))
         runFrames(frame,frameTimes, timerStart=0)
@@ -1118,7 +1214,7 @@ def trainBuffer(exp):
     frame.append(visual.TextStim(win,""))
     txt6 =visual.TextStim(
         win = win,
-        text = "If you have any questions, feel free to ask. \nPress 'X' to start the task.",
+        text = "If you have any questions, feel free to ask. \nPress X to start the task.",
         pos = (0,100),
         color = [0,1,0]
     )
@@ -1131,7 +1227,7 @@ def intialBuffer():
     frameTimes=[30,1]  #at 60hz
     frame=[]
     frame.append(visual.TextStim(win,""))
-    frame.append(visual.TextStim(win,"Welcome! \nPress press 'X' when ready..."))
+    frame.append(visual.TextStim(win,"Welcome! \nPress press X when ready..."))
     runFrames(frame,frameTimes, timerStart=0)
     getRespBuffer()
     txt = "Welcome to the Inspection Time Task. \nIn this task, a letter will be presented to you, followed by a mask. \nYour objective is to identify the letter that was presented. \nPlease enter the corresponding letter on the keyboard. \nIf you have any questions, please don't hesitate to ask the RA. \nPress 'X' to begin the task. "
@@ -1143,14 +1239,11 @@ def intialBuffer():
     getRespBuffer()
 '''
 
-
-
-header=['sub','task','condition','correct','rt','resp','block','accuracy','trial','round','2fast']
+header=['sub','task','cond1','cond2','rt','inputResp','training','accuracy','trial','block','2fast']
 print(*header,sep=", ",file=fptr)
-header=['sub','task','condition','correct','rt','resp','block','accuracy','trial','round','2fast']
+header=['sub','task','cond1','cond2','rt','inputResp','training','accuracy','trial','block','2fast']
 
 fptr.flush()
-
 trainBuffer(0)
 runInsTime(nt_inst_t)
 trainBuffer(2)
@@ -1168,15 +1261,36 @@ runMenRot(nt_rest_tasks, method = 1, rotations = [0,1,3], train = False)
 
 expBuffer(0, round = 2)
 runInsTime(nt_inst_t, rnd = 2)
-expBuffer(2, round = 2)
-runConjunct(nt_rest_tasks, set_size = [2,18], method = 1, train = False, rnd = 2)
 expBuffer(3, round = 2)
+runConjunct(nt_rest_tasks, set_size = [2,18], method = 1, train = False, rnd = 2)
+expBuffer(2, round = 2)
 runMemSpan(nt_rest_tasks, target_size=[1,5], method = 1, train = False, rnd = 2)
 expBuffer(1, round = 2)
 runMenRot(nt_rest_tasks, method = 1, rotations = [0,1,3], train = False, rnd = 2)
 
 
+frame = []
+frameTimes=[30,1]  #at 60hz
+txt100= visual.TextStim(
+    win = win,
+    text = "Well done! You have finished the experiment!",
+    pos = (0,150),
+    color = [0,1,0]
+)
+txt900= visual.TextStim(
+    win = win,
+    text = "Please call the RA over!",
+    pos = (0,0),
+    color = [0,1,0]
+)
 
+stims = [txt100] + [txt900]
+frame.append(visual.TextStim(win,""))
+frame.append(visual.BufferImageStim(win,stim=stims))
+runFrames(frame,frameTimes, timerStart=0)
+getRespBuffer()
+
+print(f"The subject ID is: {sub}.\nPlease use the same ID for the next experiment")
 
 
 hz=round(win.getActualFrameRate())

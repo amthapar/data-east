@@ -1,5 +1,6 @@
 import os
 
+'''
 def getFileName(expName,site):
     targString = expName + site +'Sub'
     path='.'
@@ -10,7 +11,7 @@ def getFileName(expName,site):
                 s=s+1
     fname=expName+site+'Sub'+str(s)
     return(fname,s)
-    
+''' 
 
 
 def startExp(expName,runMode,fps=0):
@@ -19,9 +20,9 @@ def startExp(expName,runMode,fps=0):
     print("Experiment Start\n\n")
     print("This is " + expName + " in runMode " + str(runMode))
     if runMode:
-        print("Enter Site Abbreviation (B=BrynMawr, M=Mississipi State, U=UCI): ")
-        site=input()
-        [fname,subject]=getFileName(expName,site)
+        print("Enter the Subject ID: ")
+        subject=input()
+        fname = f"sb2Sub{subject}"
     else:
         fname="testDat"        
         subject=0
