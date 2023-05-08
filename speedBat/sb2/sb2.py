@@ -1263,10 +1263,10 @@ def intialBuffer():
 header=['sub','task','cond1','cond2','rt','inputResp','training','accuracy','trial','block','2fast']
 print(*header,sep=", ",file=fptr)
 header=['sub','task','cond1','cond2','rt','inputResp','training','accuracy','trial','block','2fast']
-
+print(nt_train)
 fptr.flush()
 trainBuffer(0)
-runInsTime(nt_train)
+runInsTime(nt_inst_t)
 trainBuffer(2)
 runConjunct(nt_train, set_size = [2,18], method = 1, train = True)
 expBuffer(2)
