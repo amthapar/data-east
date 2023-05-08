@@ -16,7 +16,7 @@ import localLib
 # Setup  #####################
 ##############################
 
-target_val = [-.2,-.2,-.2]
+target_val = [-.03,-.03,-.03]
 
 win=visual.Window(units="pix",
                   size=(256,256), 
@@ -424,7 +424,7 @@ def menRotTrial(stims, truth, curve, match = False):
     )
 
 
-    frameTimes=[30,30,60,60,1]  #at 60hz
+    frameTimes=[30,30,120,60,1]  #at 60hz
     frame=[]
     #frame.append(visual.BufferImageStim(win, stim = stims))
     tstim = [visual.TextStim(win,"+"), m, x]
@@ -480,7 +480,8 @@ def runMenRot(trial_size, method = 1, rotations = [0,1,3], train = False, rnd=1)
     mats.append(np.array([[1,1,0],[0,1,1],[0,0,0]]))
     mats.append(np.array([[1,0,0],[0,0,0],[0,1,0]]))
     mats.append(np.array([[1,0,0],[0,0,0],[0,1,1]]))
-    mats.append(np.array([[0,1,0],[1,0,1],[0,0,0]]))
+    mats.append(np.array([[0,0,0],[1,1,0],[1,0,1]]))
+
 
     for i in range(len(mats)):
         temp_mat = np.flip(mats[i], axis = 1)
@@ -531,7 +532,6 @@ def runMenRot(trial_size, method = 1, rotations = [0,1,3], train = False, rnd=1)
         out=[sub,1,cond,order[t],round(rt,4),resp2,int(train),int(acc),t+1,rnd,tooFast]
         print(*out,sep=", ",file=fptr)
         fptr.flush()
-
 
 
 
@@ -672,7 +672,7 @@ def insTimeTrial(t, q, s):
         color = "white"
     )
 
-    frameTimes=[30,30,t,3,3,1]  #at 60hz
+    frameTimes=[30,45,t,2,2,1]  #at 60hz
     frame=[]
     [mask1,mask2] = mask()
     tstim = [visual.TextStim(win,"+"), x]
@@ -791,7 +791,7 @@ def expBuffer(exp, round = 1):
     frame.append(visual.BufferImageStim(win,stim=[txt0, txt1]))
     runFrames(frame,frameTimes, timerStart=0)
     getRespBuffer()
-    txt0= visual.TextStim(
+    txt10= visual.TextStim(
         win = win,
         text = "Press X to begin...",
         pos = (0,-150),
@@ -816,12 +816,33 @@ def expBuffer(exp, round = 1):
             color = [0,1,0]
         )
         frame.append(visual.TextStim(win,""))
-        frame.append(visual.BufferImageStim(win,stim=[txt0, txt2]))
+        if exp == 0:
+            frame.append(visual.BufferImageStim(win,stim=[txt10, txt2]))
+        else:
+            frame.append(visual.BufferImageStim(win,stim=[txt0, txt2]))
         runFrames(frame,frameTimes, timerStart=0)
         getRespBuffer()
         frameTimes=[60,1]  #at 60hz
         frame=[]
-
+    
+    txt3= visual.TextStim(
+        win = win,
+        text = "Please make sure you find the right answer",
+        pos = (0,150),
+        color = [0,1,0]
+    )
+    txt4= visual.TextStim(
+        win = win,
+        text = "Once you're confident, quickly press the related button",
+        pos = (0,0),
+        color = [0,1,0]
+    )
+    if exp != 0:
+        frame.append(visual.TextStim(win,""))
+        frame.append(visual.BufferImageStim(win,stim=[txt10, txt3, txt4]))
+        runFrames(frame,frameTimes, timerStart=0)
+        getRespBuffer()
+    
 
 
 def trainBuffer(exp):
@@ -1245,7 +1266,7 @@ header=['sub','task','cond1','cond2','rt','inputResp','training','accuracy','tri
 
 fptr.flush()
 trainBuffer(0)
-runInsTime(nt_inst_t)
+runInsTime(nt_train)
 trainBuffer(2)
 runConjunct(nt_train, set_size = [2,18], method = 1, train = True)
 expBuffer(2)
