@@ -17,7 +17,7 @@ if fps!=120:
     print("WARNING....  Frame Rate is not 120")
     input("Enter to Continue, control-c to quit.  ") 
 
-[fptr,sub]=localLib.startExp(expName="as14-120",runMode=True,fps=fps)
+[fptr,sub]=localLib.startExp(expName="as14-120R",runMode=True,fps=fps)
 win=visual.Window(units="pix",
                   size=(256,256), 
                   color=[0,0,0],
@@ -147,9 +147,9 @@ def block(sub,blk,blkType,crit,numTrials=50):
             crit=1
 
 
-blkType=[0,1,1,0,0,1,1,0]
+blkType=[1,0,0,1,1,0,0,1]
 #startCrit=[20,20,9,5,5,9,9,5]  # for 75
-startCrit=[30,30,13,7,7,13,13,7]  # for 120
+startCrit=[30,30,7,13,13,7,7,13]  # for 120
 numTrials=[10,10,50,50,50,50,50,50]
 for b in range(len(blkType)):
     block(sub,b,blkType[b],crit=startCrit[b],numTrials=numTrials[b])    
